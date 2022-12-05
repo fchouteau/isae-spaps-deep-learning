@@ -590,6 +590,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.nn import functional as F
 from torchvision import datasets, transforms
 
 
@@ -601,21 +602,25 @@ from torchvision import datasets, transforms
 class CNN_Network(nn.Module):
     def __init__(self):
         super(CNN_Network, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=12, kernel_size=5)
+        self.conv2 = nn.Conv2d(in_channels=12, out_channels=24, kernel_size=5)
+        self.fc1 = nn.Linear(24 * 4 * 4, 50)
+        self.fc2 = nn.Linear(50, 10)
 
     def forward(self, x):
-        x = nn.Conv2d(in_channels=1, out_channels=12, kernel_size=5)(x)
+        x = self.conv1(x)
         x = nn.ReLU()(x)
         x = nn.MaxPool2d(kernel_size=2)(x)
 
-        x = nn.Conv2d(in_channels=12, out_channels=24, kernel_size=5)(x)
+        x = self.conv2(x)
         x = nn.ReLU()(x)
         x = nn.MaxPool2d(kernel_size=2)(x)
 
         x = nn.Flatten()(x)
-        x = nn.Linear(24 * 4 * 4, 50)(x)
+        x = self.fc1(x)
         x = nn.ReLU()(x)
 
-        x = nn.Linear(50, 10)(x)
+        x = self.fc2(x)
         x = nn.LogSoftmax(dim=1)(x)
 
         return x
