@@ -2,7 +2,9 @@
 
 This repository contains the code and documentation of a "Deep Learning Introduction" given at ISAE-SUPAERO for the Msc SPAPS
 
-The introduction slides can be accessed at [this URL](https://docs.google.com/presentation/d/1j6TkU6GkT6iZYLy5f0HhrBnJFlIAOR0wzdD4K5tKHgA/edit?usp=sharing). 
+The introduction slides can be accessed at :
+- [Part 1 : this URL](https://docs.google.com/presentation/d/1j6TkU6GkT6iZYLy5f0HhrBnJFlIAOR0wzdD4K5tKHgA). 
+- [Part 2 : this URL](https://docs.google.com/presentation/d/11eQWsYACahbos3F5XcF_ClMjAR_5gFP5gs_YpL5vuO0). 
 
 Complimenatry slides can be accessed [here](https://fchouteau.github.io/isae-practical-deep-learning/)
 
@@ -33,11 +35,10 @@ Check [this tutorial](https://colab.research.google.com/github/ga642381/ML2021-S
 
 ## Reading list
 
-- The Bible : [Convolutional Neural Networks for Image Recognition by Stanford](http://cs231n.stanford.edu/syllabus.html), slides & course notes are very useful
+- The Bible : [Convolutional Neural Networks for Image Recognition by Stanford](http://cs231n.stanford.edu/schedule.html), slides & course notes are very useful
+- [Dive Into Deep Learning](https://d2l.ai/) for practical examples of everything Deep Learning
 - [CS231n: Details on convolutions](https://cs231n.github.io/convolutional-networks/), how to compute number of parameters & tensor sizes in a CNN...
 - [Guide on convolution arithmetics](https://github.com/vdumoulin/conv_arithmetic ) and a lot of visualisations to understand convolutions better
-- Two [medium blog posts](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
-) that try [to explain things better](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
 
 ## Usage & Contribution
 

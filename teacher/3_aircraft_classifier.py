@@ -40,10 +40,14 @@
 # - Activate the GPU runtime in colab
 # - Check using `!nvidia-smi` that you detect it
 
-# %% {"id": "xEo4VpHqC1yF"}
+# %%
+# Bash command nvidia-smi prints the current GPU usage and process list if GPU is detected
+# !nvidia-smi
+
+# %%
 # %matplotlib inline
 
-# %% {"id": "FG3_sWsWC1yH"}
+# %%
 # Put your imports here
 import numpy as np
 
@@ -499,16 +503,16 @@ def summarize(module, max_depth=None, example_input_array=None) -> ModelSummary:
     return model_summary
 
 
-# %% [markdown] {"id": "1nb7isjuC1yI"}
+# %% [markdown]
 # ## Dataset
 #
-# Récupération et exploration du datset
+# Collect and explore the dataset
 
-# %% {"id": "XLml82VWC1yK"}
+# %%
 # Configuration variables
 TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/large_aircraft_dataset.npz"
 
-# %% [markdown] {"id": "Shmmb50XC1yK"}
+# %% [markdown]
 # ### Image (reminders)
 #
 # A digital image is an image composed of picture elements, also known as pixels, each with finite, discrete quantities of numeric representation for its intensity or gray level that is an output from its two-dimensional functions fed as input by its spatial coordinates denoted with x, y on the x-axis and y-axis, respectively.
@@ -526,7 +530,7 @@ TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/l
 #
 # ![conventions](https://storage.googleapis.com/fchouteau-isae-deep-learning/static/image_coordinates.png)
 
-# %% [markdown] {"id": "nPa5zHUBC1yN"}
+# %% [markdown]
 # ### Downloading the dataset
 #
 # We will be using [numpy datasources](https://docs.scipy.org/doc/numpy/reference/generated/numpy.DataSource.html?highlight=datasources) to download the dataset. DataSources can be local files or remote files/URLs. The files may also be compressed or uncompressed. DataSource hides some of the low-level details of downloading the file, allowing you to simply pass in a valid file path (or URL) and obtain a file object.
@@ -540,7 +544,7 @@ TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/l
 # ```
 # in a cell above the cell below
 
-# %% {"id": "aPxBx-2-C1yP"}
+# %%
 ds = np.DataSource(destpath="/tmp/")
 f = ds.open(TOY_DATASET_URL, "rb")
 
@@ -550,10 +554,10 @@ trainval_labels = toy_dataset["train_labels"]
 test_images = toy_dataset["test_images"]
 test_labels = toy_dataset["test_labels"]
 
-# %% [markdown] {"id": "dRMdfPRKC1yR"}
+# %% [markdown]
 # ### A bit of data exploration
 
-# %% [markdown] {"id": "KLD83Y7vC1yR"}
+# %% [markdown]
 # **Q1. Labels counting**
 #
 # a. What is the dataset size ?
@@ -564,17 +568,17 @@ test_labels = toy_dataset["test_labels"]
 #
 # d. What are the dimensions (height and width) of the images ? What are the number of channels ?
 
-# %% [markdown] {"id": "5xkrtVx-C1yS"}
+# %% [markdown]
 # **Q2. Can you plot at least 8 examples of each label ? In a 4x4 grid ?**
 
-# %% [markdown] {"id": "n_fynC7iC1yT"}
+# %% [markdown]
 # Here are some examples that help you answer this question. Try them and make your own. A well-understandood dataset is the key to an efficient model.
 
-# %% {"id": "7XcQrRWKC1yT"}
+# %%
 import cv2
 import matplotlib.pyplot as plt
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "l7wcKYZBC1yU", "outputId": "4068a524-b60a-48ec-f40d-9538e2ea425f"}
+# %%
 LABEL_NAMES = ["Not an aircraft", "Aircraft"]
 
 print("Labels counts :")
@@ -586,17 +590,17 @@ for l, label in enumerate(LABEL_NAMES):
         f"Examples shape for label {l} : {trainval_images[trainval_labels == l, ::].shape}"
     )
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "ArvB0PsXC1yW", "outputId": "84db6bb2-22b4-4384-d197-2ddcac18d9fd"}
+# %%
 LABEL_NAMES = ["Not an aircraft", "Aircraft"]
 
-print("Labels counts :")
+print("Labels counts for test dataset :")
 for l, c, label in zip(*np.unique(test_labels, return_counts=True), LABEL_NAMES):
     print(f" Label: {label} , value: {l}, count: {c}")
 
 for l, label in enumerate(LABEL_NAMES):
     print(f"Examples shape for label {l} : {test_images[test_labels == l, ::].shape}")
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 594}, "id": "ol6QpoP6C1yX", "outputId": "5d445c41-2ed8-4f75-ed45-5ba1e25a2c8f"}
+# %%
 grid_size = 4
 grid = np.zeros((grid_size * 64, grid_size * 64, 3)).astype(np.uint8)
 for i in range(grid_size):
@@ -612,7 +616,7 @@ ax = fig.add_subplot(1, 1, 1)
 ax.imshow(grid)
 plt.show()
 
-# %% [markdown] {"id": "gFtNYE6EC1yY"}
+# %% [markdown]
 # ### A bit about train-test
 #
 # You just downloaded a training and a test set.
@@ -639,7 +643,7 @@ plt.show()
 #
 # We are also going to reduce the number of background examples to speedup trainings
 
-# %% {"id": "gHmjoZhLC1yZ"}
+# %%
 background_indexes = np.where(trainval_labels == 0)[0][::3]
 print(len(background_indexes))
 foreground_indexes = np.where(trainval_labels == 1)[0]
@@ -678,15 +682,16 @@ print(np.unique(valid_labels, return_counts=True))
 mean = np.mean(train_images, axis=(0, 1, 2)) / 255.0
 std = np.std(train_images, axis=(0, 1, 2)) / 255.0
 
-mean, std
+print("mean = ", mean)
+print("std = ", std)
 
-# %% [markdown] {"id": "SZ6VBCvQC1ya"}
+# %% [markdown]
 # ## Preparing our training
 #
 # Remember that training a deep learning model requires:
 #
 # - Defining a model to train
-# - Defining a loss function (cost function) to compute gradients with
+# - Defining a loss function (cost function / criterion) to compute gradients with
 # - Defining an optimizer to update parameters
 # - Putting the model on the accelerator device that trains very fast (GPU, TPU)... You'll learn about GPUs later :)
 #
@@ -697,7 +702,7 @@ mean, std
 # ![](https://pbs.twimg.com/media/E_1d06XVcA8Dhzs?format=jpg)
 #
 
-# %% {"id": "10ow7xWIC1ya"}
+# %%
 from typing import Callable
 
 import torch
@@ -707,7 +712,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
 
-# %% [markdown] {"id": "AKqUcnCcC1yb"}
+# %% [markdown]
 # ### Defining Dataset & Transforms
 #
 # First, we need to tell pytorch how to load our data.
@@ -716,7 +721,7 @@ from torchvision import datasets, transforms
 #
 # We write our own `torch.data.Dataset` class
 
-# %% {"id": "uvFjmzHoC1yb"}
+# %%
 class NpArrayDataset(Dataset):
     def __init__(
         self,
@@ -750,10 +755,10 @@ class NpArrayDataset(Dataset):
         return x, y
 
 
-# %% [markdown] {"id": "0Z4N5o8AC1yb"}
+# %% [markdown]
 # Then we need to process our data (images) into "tensors" that torch can process, we define "transforms"
 
-# %% {"id": "PahdjhR5C1yc"}
+# %%
 # transform to convert np array in range [0,255] to torch.Tensor [0.,1.]
 # then normalize by doing x = (x - mean) / std
 image_transforms = transforms.Compose(
@@ -766,10 +771,10 @@ image_transforms = transforms.Compose(
 # here we don't have anything to do
 target_transforms = None
 
-# %% [markdown] {"id": "p9QH51F-C1yc"}
+# %% [markdown]
 # Now we put everything together into something to load our data
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "CR14oNXyC1yd", "outputId": "55d52439-7ffc-46a6-d7fb-13c0b173e761"}
+# %%
 # load the training data
 train_set = NpArrayDataset(
     images=train_images,
@@ -784,8 +789,8 @@ train_loader = DataLoader(train_set, batch_size=64, shuffle=True)
 
 # load the validation data
 validation_set = NpArrayDataset(
-    images=val_images,
-    labels=val_labels,
+    images=valid_images,
+    labels=valid_labels,
     image_transforms=image_transforms,
     label_transforms=target_transforms,
 )
@@ -794,16 +799,16 @@ print(len(validation_set))
 
 val_loader = DataLoader(validation_set, batch_size=64, shuffle=True)
 
-# %% [markdown] {"id": "0yxUYemIC1yd"}
+# %% [markdown]
 # ### Check that your dataset outputs correct data
 #
-# Always to this as a sanity check to catch bugs in your data processing pipeline
+# Always do this as a sanity check to catch bugs in your data processing pipeline
 #
 # Write the inverse transformation by hand to ensure it's ok
 #
 # ![andrej](https://storage.googleapis.com/fchouteau-isae-deep-learning/static/andrej_tweet_1.png)
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 116}, "id": "Ic2sE836C1ye", "outputId": "db784726-e3e0-40c3-d9ff-9e0ec597d28e"}
+# %%
 k = np.random.randint(len(train_set))
 x, y = train_set[k]
 
@@ -823,7 +828,7 @@ plt.show()
 plt.imshow(train_set.images[k])
 plt.show()
 
-# %% [markdown] {"id": "4np1A43JC1yf"}
+# %% [markdown]
 # ## Model
 
 # %% [markdown]
@@ -831,12 +836,12 @@ plt.show()
 #
 # We will check if we have a GPU and set the "device" of pytorch on it so that it trains on GPU 
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "BmV9carLC1yf", "outputId": "dba28689-a129-4ae1-facc-41f9d3e55f8e"}
+# %%
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 print(DEVICE)
 
-# %% [markdown] {"id": "AJ3oVqOHC1yg"}
+# %% [markdown]
 # ### Defining a model and computing the parameters
 #
 # Now we have to define a CNN to train. It's usually called a "network", and we define its "architecture".
@@ -905,7 +910,7 @@ print(DEVICE)
 #
 # Do you understand why ? 
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "hd06b1EnC1yh", "outputId": "039eb3c0-b120-4288-e404-f1e70bb76a48"}
+# %%
 # Let's test this !
 
 some_model = nn.Sequential(
@@ -953,18 +958,18 @@ print(summarize(some_model, example_input_array=x))
 # let's delete the model now, we won't need it
 del some_model
 
-# %% [markdown] {"id": "YPpPpXwZC1yh"}
+# %% [markdown]
 # **Let's do it yourself !**
 #
 # About weight init :
 # - https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
 # - https://www.pyimagesearch.com/2021/05/06/understanding-weight-initialization-for-neural-networks/
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 398}, "id": "d5nx-e0VC1yh", "outputId": "b4f8293d-996e-4e95-bcbc-0442c991ebbe"}
+# %%
 # Let's define another model, except this time there are blanks ... it's up to you to fill them
 
 
-def _init_weights(model):
+def init_weights(model):
     for m in model.modules():
         # Initialize all convs
         if isinstance(m, nn.Conv2d):
@@ -1020,24 +1025,13 @@ print(summarize(model, example_input_array=x))
 
 # THIS CELL SHOULD NOT GIVE AN ERROR !
 
-# %% [markdown] {"id": "nxb-JeDnC1yk"}
+# %% [markdown]
 # Hint: The answer (and there can only be one) is :
 #
 # <details>
 #     <summary>Solution</summary> 
 #     
 # ```python
-# def _init_weights(model):
-#     # about weight initialization
-#     # https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
-#     # https://www.pyimagesearch.com/2021/05/06/understanding-weight-initialization-for-neural-networks/
-#     for m in model.modules():
-#         # Initialize all convs
-#         if isinstance(m, nn.Conv2d):
-#             nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-#         if isinstance(m, nn.Linear):
-#             nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-#
 #
 # def model_fn():
 #     model = nn.Sequential(
@@ -1142,18 +1136,6 @@ print(summarize(model, example_input_array=x))
 # You should be able to understand this
 
 # %% {"id": "9gpZy_3cC1yk", "tags": ["solution"]}
-def _init_weights(model):
-    # about weight initialization
-    # https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
-    # https://www.pyimagesearch.com/2021/05/06/understanding-weight-initialization-for-neural-networks/
-    for m in model.modules():
-        # Initialize all convs
-        if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-        if isinstance(m, nn.Linear):
-            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-
-
 def model_fn():
     model = nn.Sequential(
         # A first convolution block
@@ -1228,7 +1210,7 @@ optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
 # %% [markdown]
 # ### Defining the Training loop
 
-# %% {"id": "xfP8tBSMC1yn"}
+# %%
 def train_one_epoch(model, train_loader, opt, loss_fn):
 
     epoch_loss = []
@@ -1306,10 +1288,10 @@ model = model.to(DEVICE)
 
 print(model)
 
-x = x.to(DEVICE)  # <----- ADD THIS
-
 # We define an input of dimensions batch_size, channels, height, width
 x = torch.rand((16, 3, 64, 64))
+
+x = x.to(DEVICE)
 
 print(x.shape)
 
@@ -1330,15 +1312,18 @@ LEARNING_RATE = 1e-2
 MOMENTUM = 0.9
 
 # %%
+# Define criterion and optimizer
 criterion = nn.BCELoss(reduction="mean")
 optimizer = optim.SGD(
     model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=1e-4
 )
 
 # %% [markdown]
-# Let's go !
+# Let's train our network !
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "6fwFxOOFGQkZ", "outputId": "a6da7c86-8233-4257-cf0f-86d6ff13ea88"}
+# %%
+# Reinitialize our model
+init_weights(model)
 # Send model to GPU
 model = model.to(DEVICE)
 
@@ -1347,9 +1332,9 @@ valid_losses = []
 
 # loop over the dataset multiple times
 for epoch in range(EPOCHS):
-    model.train()
+    model.train()  # Set model in training mode
     train_epoch_loss = train_one_epoch(model, train_loader, optimizer, criterion)
-    model.eval()
+    model.eval()  # Set model in eval mode
     valid_epoch_loss = valid_one_epoch(model, val_loader, criterion)
 
     print(f"EPOCH={epoch}, TRAIN={train_epoch_loss}, VAL={valid_epoch_loss}")
@@ -1357,7 +1342,7 @@ for epoch in range(EPOCHS):
     train_losses.append(train_epoch_loss)
     valid_losses.append(valid_epoch_loss)
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 279}, "id": "sFTlE66MC1yo", "outputId": "3f24cd80-7722-4228-e74e-7b4e2759fcb1"}
+# %%
 # Plot training / validation loss
 plt.plot(train_losses, label="Training Loss")
 plt.plot(valid_losses, label="Validation Loss")
@@ -1366,7 +1351,7 @@ plt.ylabel("Loss")
 plt.legend(frameon=False)
 plt.show()
 
-# %% [markdown]
+# %% [markdown] {"id": "e08d2219"}
 # ### Training analysis
 #
 # How would you analyze your training ?
@@ -1375,7 +1360,7 @@ plt.show()
 #
 # Is it overfitting ?
 
-# %% [markdown]
+# %% [markdown] {"id": "3edb59c5"}
 # ### Model saving
 #
 # There are several ways to save your model :
@@ -1393,16 +1378,17 @@ plt.show()
 # The third option requires you to redefine an empty model with the same architecture and load the weights, because we are only saving the "state" (e.g. parameters, weights, biases)
 # The fourth option allow to make a "self-contained" model that can be used later, but comes with caveats
 
-# %% [markdown]
+# %% [markdown] {"id": "afa82d48"}
 # ### State dict saving 
 #
 # This is the recommended method because it allows to reuse the model with any code
 
-# %%
+# %% {"id": "cc4efcda"}
 # State dict saving
 with open("model.pt", "wb") as f:
     torch.save(model.state_dict(), f)
 
+# Your model is saved here "/content/model.pt"
 # See below for how to reload the model
 
 # %% [markdown]
@@ -1425,9 +1411,9 @@ with open("model.pt", "wb") as f:
 # %% [markdown]
 # ### Model scripting
 #
-# But for production, in order to avoid shipping the model definition code, we like to have an "self-contained" binary that we can deliver to the production team (you will see such a case during our next class together for cloud computing)
+# But for production, in order to avoid shipping the model definition code, we like to have an "self-contained" binary that we can deliver to the production team.
 #
-# Here we try to "script" the model, meaning that we compile the graph to a static version of itself
+# Here we try to "script" the model, meaning that we compile the graph to a static version of itself.
 #
 # https://pytorch.org/docs/stable/jit.html
 
@@ -1443,10 +1429,14 @@ scripted_model = torch.jit.script(model)
 # Save
 scripted_model.save("scripted_model.pt")
 
+# Your model is saved here "/content/scripted_model.pt"
+
 print(scripted_model)
 
 # Scripted model reloading (demo)
-scripted_model = torch.jit.load("scripted_model.pt", map_location=DEVICE)
+scripted_loaded_model = torch.jit.load("scripted_model.pt", map_location=DEVICE)
+
+print(scripted_loaded_model)
 
 # %% [markdown]
 # ### Download the scripted model
@@ -1460,25 +1450,25 @@ scripted_model = torch.jit.load("scripted_model.pt", map_location=DEVICE)
 
 # files.download('scripted_model.pt')
 
-# %% [markdown] {"id": "VqMkcDroC1yp"}
+# %% [markdown]
 # We have finished what we need to do with the model, let's delete it !
 
-# %% {"id": "btrb85LmC1yp"}
+# %%
 del model
 
-# %% [markdown] {"id": "QW5XvyyZC1yq"}
+# %% [markdown]
 # ## Testing our models and computing metrics
 #
 # Now that we have a trained network, it is important to measure how well it performs. We do not do that during training because theoretically we try to test on a context closer to how the final model will be used, meaning this can be another pipeline and is usually outside the training engine.
 #
 # You can refer to your ML course or on resources on the web to see how we can measure it.
 
-# %% [markdown] {"id": "g0TldNDQC1yq"}
+# %% [markdown]
 # ### Loading saved model
 #
 # State dict method
 
-# %% {"id": "Q-kCmgWEC1yr"}
+# %%
 # Instantiate a new empty model
 model = model_fn()
 
@@ -1490,12 +1480,12 @@ model.load_state_dict(torch.load(checkpoint_path))
 
 print("Model Loaded")
 
-# %% [markdown] {"id": "a-rbNh7qC1yr"}
+# %% [markdown]
 # ### Inferencing on the test dataset
 #
 # Now we will run predictions on the test dataset using the newly loaded model
 
-# %% {"id": "LjlrKEEOC1yr"}
+# %%
 test_ds = NpArrayDataset(
     images=test_images,
     labels=test_labels,
@@ -1503,10 +1493,10 @@ test_ds = NpArrayDataset(
     label_transforms=target_transforms,
 )
 
-# %% {"id": "Jf3oIRA4C1yr"}
+# %%
 import tqdm
 
-# %% {"id": "VWM757ggC1ys"}
+# %%
 y_true = []
 y_pred = []
 
@@ -1531,19 +1521,19 @@ with torch.no_grad():
 y_pred = np.concatenate(y_pred, axis=0)
 y_true = np.asarray(y_true)
 
-# %% {"id": "awHUQ2KxC1ys"}
-print(y_pred.shape)
+# %%
+# print(y_pred.shape)
 
 print(y_pred[4])
 
-# %% {"id": "aGqeE1UJC1ys"}
+# %%
 y_pred_classes = y_pred[:, 0] > 0.5
 
-# %% [markdown] {"id": "wMuCtss8C1ys"}
+# %% [markdown]
 # ### Confusion matrix
 # Here, we are first computing the [confusion matrix]():
 
-# %% {"id": "QSq5-t7dC1yt"}
+# %%
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 print("Confusion matrix")
@@ -1556,7 +1546,7 @@ disp = ConfusionMatrixDisplay(
 disp.plot()
 plt.show()
 
-# %% [markdown] {"id": "Ao41bfOuC1yt", "tags": []}
+# %% [markdown]
 # ### ROC curve
 #
 # The next metric we are computing is the [Receiver Operating Characteristic](https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html). A receiver operating characteristic curve, or ROC curve, is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. The method was originally developed for operators of military radar receivers starting in 1941, which led to its name. 
@@ -1566,9 +1556,17 @@ plt.show()
 # ![](http://algolytics.com/wp-content/uploads/2018/05/roc1_en.png)
 #
 # It is used to choose a threshold on the output probability in case you are interesting in controling the false positive rate.
+#
+# In our case with our aircraft classifier :
+#
+#
+# *   **True Positive Rate** = Number of well classified aircraft / Total number of aircraft
+# *   **False Positive Rate** = Number of background misclassified as aircraft / Total number of background
+#
+#
 
-# %% {"id": "sEj4ZBgTC1yt"}
-# Compute ROC curve and Area Under Curver
+# %%
+# Compute ROC curve and Area Under Curve
 
 from sklearn.metrics import auc, roc_curve
 
@@ -1578,7 +1576,7 @@ y_pred_probas = np.round(y_pred[:, 0], 2)
 fpr, tpr, thresholds = roc_curve(y_true, y_pred_probas)
 roc_auc = auc(fpr, tpr)
 
-# %% {"id": "KGD6ukiMC1yu"}
+# %%
 plt.figure()
 lw = 2
 plt.plot(
@@ -1618,16 +1616,20 @@ plt.ylim([0.0, 1.05])
 plt.xlim([0.0, 1.0])
 plt.title("2-class ROC curve: AUC={:0.2f}".format(roc_auc))
 plt.plot([0, 1], [0, 1], color="darkblue", linestyle="--")
+plt.grid()
 
 for tp, fp, t in zip(tpr, fpr, thresholds):
     plt.annotate(
         np.round(t, 2),
         xy=(fp, tp),
-        xytext=(fp - 0.05, tp - 0.05),
+        xytext=(fp + 0.05, tp - 0.05),
         arrowprops=dict(arrowstyle="->", connectionstyle="arc3"),
     )
 plt.savefig("roc_curve_thresholds.png")
 plt.show()
+
+# %%
+max(y_pred_probas)
 
 # %% [markdown]
 # Now, choose a threshold on the curve where you miss less than 10% of the aircrafts
@@ -1650,14 +1652,14 @@ plt.show()
 
 # How did the confusion matrix evolve ? Does it match your intuition ?
 
-# %% [markdown] {"id": "ql5f8eLHC1yu"}
+# %% [markdown]
 # ### Misclassified examples
 #
 # It is always interesting to check mis classified examples.
 #
 # It usually provides tips on how to improve your model.
 
-# %% {"id": "Z0wvNDzmC1yv"}
+# %%
 misclassified_idxs = np.where(y_pred_classes != y_true)[0]
 
 print(len(misclassified_idxs))
@@ -1674,7 +1676,7 @@ for i in range(grid_size):
     for j in range(grid_size):
         img = np.copy(misclassified_images[i * grid_size + j])
         pred = np.copy(misclassified_pred_labels[i * grid_size + j])
-        color = (0, 255, 0) if pred == 1 else (255, 0, 0)
+        color = (255, 127, 0) if pred == 1 else (255, 0, 0)
         tile = cv2.rectangle(img, (0, 0), (64, 64), color, thickness=2)
         grid[i * 64 : (i + 1) * 64, j * 64 : (j + 1) * 64, :] = img
 
@@ -1683,7 +1685,7 @@ ax = fig.add_subplot(1, 1, 1)
 ax.imshow(grid)
 plt.show()
 
-# %% [markdown] {"id": "-DDeFy4cC1yv"}
+# %% [markdown]
 # ## Improving our training / validation loop
 #
 # We will add more advanced features to our training loop for better models
@@ -1693,7 +1695,7 @@ plt.show()
 # %% [markdown]
 # ### Computing accuracy during training / validation
 #
-# Update the `valid_one_epoch` to compute accuracy during during the validation loop, and plot its evolution during training
+# Update the `valid_one_epoch` to compute accuracy during the validation loop, and plot its evolution during training
 #
 # Use the ROC curve computation where we compute the pred / true classes as inspiration
 #
@@ -1714,21 +1716,20 @@ plt.show()
 #             total_pred += 1
 #             
 #     # print accuracy
-#     accuracy = 100 * (total_pred / total_pred)
+#     accuracy = 100 * (correct_pred / total_pred)
 #     print("Accuracy is: {:.1f} %".format(accuracy))
 #
 # ```                                             
 
-# %% [markdown] {"id": "84qzXDMGC1yw"}
+# %% [markdown]
 # ### Early stopping
 #
-# You've seen that it is possible to overfit it you're not careful,
+# You may have seen that it is possible to overfit it you're not careful.
+# Thanks to train_epoch_loss and valid_epoch_loss, it is possible to prevent overtiftting by stopping network training when those 2 losses diverge.
 #
 # **Go back to your previous class and adapt the training loop to add early stopping**
 
-# %% {"id": "NW7rLbdGC1yx"}
-
-# %% [markdown] {"id": "4XRzekUGC1yy"}
+# %% [markdown] {"id": "5f2ef879"}
 # ### Data Augmentation
 #
 #
@@ -1751,12 +1752,12 @@ plt.show()
 # **Remember : We apply data augmentation only during training**
 #
 
-# %% {"id": "ua4UQAZWC1yy"}
+# %%
 import torch.functional as F
 import torch.utils
 import torchvision.transforms
 
-# %% {"id": "em78uFlnC1yy"}
+# %%
 # Example (very simple) data augmentation to get your started, you can add more transforms to this list
 
 train_transform = torchvision.transforms.Compose(
@@ -1769,7 +1770,7 @@ train_transform = torchvision.transforms.Compose(
     ]
 )
 
-# %% {"id": "5yPlhQbzC1yy"}
+# %%
 trainset_augmented = NpArrayDataset(
     images=train_images,
     labels=train_labels,
@@ -1777,7 +1778,7 @@ trainset_augmented = NpArrayDataset(
     label_transforms=None,
 )
 
-# %% {"id": "MeKVDcHrC1yz"}
+# %%
 # Get image from dataset. Note: it has been converted as a torch tensor in CHW format in float32 normalized !
 img, label = trainset_augmented[0]
 img = img.numpy().transpose((1, 2, 0)) * std + mean
@@ -1786,12 +1787,12 @@ img = (img * 255.0).astype(np.uint8)
 plt.imshow(img)
 plt.show()
 
-# Compare effects of data augmentation
+# Compare effects of data augmentation (Random flips)
 img_orig = trainset_augmented.images[0]
 plt.imshow(img_orig)
 plt.show()
 
-# %% {"id": "ej7Jb0SNC1yz"}
+# %%
 # do another training and plot our metrics again. Did we change something ?
 
 # %% [markdown] {"tags": []}
@@ -1808,7 +1809,7 @@ plt.show()
 
 # %%
 
-# %% [markdown] {"toc-hr-collapsed": true}
+# %% [markdown]
 # ### Food for thoughts: Tooling
 #
 # To conclude this notebook, reflect on the following,
@@ -1922,7 +1923,7 @@ plt.show()
 #     
 # </details>
 
-# %% [markdown] {"id": "xUlVYFuPC1yz"}
+# %% [markdown]
 # ### Trying other models
 #
 # You have seen a class on different model structure,
@@ -1935,7 +1936,7 @@ plt.show()
 # You can also use models from [torchvision](https://pytorch.org/docs/stable/torchvision/models.html#classification) in your loop, or as inspiration
 #
 
-# %% [markdown] {"id": "L5vTgr9OC1yz"}
+# %% [markdown]
 # **Modify the model structure and launch another training... Is it better ?**
 
 # %%
