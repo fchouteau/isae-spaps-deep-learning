@@ -3,8 +3,8 @@
 This repository contains the code and documentation of a "Deep Learning Introduction" given at ISAE-SUPAERO for the Msc SPAPS
 
 The introduction slides can be accessed at :
-- [Part 1 : this URL](https://docs.google.com/presentation/d/1j6TkU6GkT6iZYLy5f0HhrBnJFlIAOR0wzdD4K5tKHgA). 
-- [Part 2 : this URL](https://docs.google.com/presentation/d/11eQWsYACahbos3F5XcF_ClMjAR_5gFP5gs_YpL5vuO0). 
+- [Part 1 : this URL](https://docs.google.com/presentation/d/1cFhDq6qgQtPPX50drP2w7rPS1xVT6madM6gMrrsY6wA). 
+- [Part 2 : this URL](https://docs.google.com/presentation/d/10zd65eg0X_aqydggKRvC3s20AXSu3WI9RWWUKJVvfAI). 
 
 Complimenatry slides can be accessed [here](https://fchouteau.github.io/isae-practical-deep-learning/)
 
@@ -16,13 +16,13 @@ Contributors : Florient CHOUTEAU, Quentin LETURGIE
 
 ## Syllabus
 
-**05/12**
+**12/12**
 - Lecture : Introduction to Deep Learning
 - Hands-on : Deep Learning Notebook
 - Hands-on : Convolutional Neural Networks Notebook
 - Hands-on : Aircraft Classification with CNNs
 
-**09/12**
+**13/12**
 - Lecture : “Artificial Intelligence” in practice
 - Hands-on (continued) : Aircraft Classification with CNNs
 - Recap : Important notions on Deep Learning

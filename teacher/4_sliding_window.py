@@ -7,14 +7,14 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.16.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# %% [markdown]
+# %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
 # # Session 4 : Using the sliding window technique to predict on larger images
 #
 # <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" align="left" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>&nbsp;| Florient Chouteau | Quentin Léturgie <a href="https://supaerodatascience.github.io/deep-learning/">https://supaerodatascience.github.io/deep-learning/</a>
@@ -42,7 +42,7 @@ from torchvision import transforms
 
 # %%
 # Global variables
-tiles_dataset_url = "https://storage.googleapis.com/fchouteau-isae-deep-learning/tiles_aircraft_dataset.npz"
+tiles_dataset_url = "https://storage.googleapis.com/fchouteau-isae-deep-learning/tiles_aircraft_dataset_2023.npz"
 
 # %% [markdown]
 # ## Download the dataset

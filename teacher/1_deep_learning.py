@@ -6,11 +6,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.16.0
 #   kernelspec:
-#     display_name: py39-isae
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: py39-isae
+#     name: python3
 # ---
 
 # %% [markdown]
@@ -45,7 +45,7 @@
 #     An automatic differentiation library that is useful to implement neural networks.
 #
 
-# %% [markdown] tags=[]
+# %% [markdown]
 # ### 1.1.1 Tensors
 #
 # Tensors are a specialized data structure that are very similar to arrays
@@ -711,7 +711,7 @@ print(out)
 net.zero_grad()
 out.backward(torch.randn(1, 10))
 
-# %% [markdown] tags=[]
+# %% [markdown]
 # ``torch.nn`` only supports mini-batches. The entire ``torch.nn``
 #     package only supports inputs that are a mini-batch of samples, and not
 #     a single sample.
