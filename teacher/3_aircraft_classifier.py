@@ -15,12 +15,12 @@
 #     name: python3
 # ---
 
-# %% [markdown] {"id": "2iUXCk7tC1x5", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "2iUXCk7tC1x5", "slideshow": {"slide_type": ""}}
 # # Session 3 : Training your first aircraft classifier with pytorch
 #
 # <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" align="left" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>&nbsp;| Florient Chouteau | Quentin Léturgie <a href="https://supaerodatascience.github.io/deep-learning/">https://supaerodatascience.github.io/deep-learning/</a>
 
-# %% [markdown] {"id": "yfn1RtChC1yD", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "yfn1RtChC1yD", "slideshow": {"slide_type": ""}}
 # ## Intro
 #
 # The objectives of this session is to apply what you learned during [the previous class on Deep Learning](https://supaerodatascience.github.io/deep-learning/) on a real dataset of satellite images.
@@ -44,24 +44,24 @@
 # Installation script for torchinfo package
 # !pip install torchinfo
 
-# %% {"id": "xEo4VpHqC1yF", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "xEo4VpHqC1yF", "slideshow": {"slide_type": ""}}
 # %matplotlib inline
 
-# %% {"id": "FG3_sWsWC1yH", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "FG3_sWsWC1yH", "slideshow": {"slide_type": ""}}
 # Put your imports here
 import numpy as np
 import torchinfo
 
-# %% [markdown] {"id": "1nb7isjuC1yI", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "1nb7isjuC1yI", "slideshow": {"slide_type": ""}}
 # ## Dataset
 #
 # Récupération et exploration du datset
 
-# %% {"id": "XLml82VWC1yK", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "XLml82VWC1yK", "slideshow": {"slide_type": ""}}
 # Configuration variables
 TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/toy_aircraft_dataset_2023.npz"
 
-# %% [markdown] {"id": "Shmmb50XC1yK", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "Shmmb50XC1yK", "slideshow": {"slide_type": ""}}
 # ### Image (reminders)
 #
 # A digital image is an image composed of picture elements, also known as pixels, each with finite, discrete quantities of numeric representation for its intensity or gray level that is an output from its two-dimensional functions fed as input by its spatial coordinates denoted with x, y on the x-axis and y-axis, respectively.
@@ -79,7 +79,7 @@ TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/t
 #
 # ![conventions](https://storage.googleapis.com/fchouteau-isae-deep-learning/static/image_coordinates.png)
 
-# %% [markdown] {"id": "nPa5zHUBC1yN", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "nPa5zHUBC1yN", "slideshow": {"slide_type": ""}}
 # ### Downloading the dataset
 #
 # We will be using [numpy datasources](https://docs.scipy.org/doc/numpy/reference/generated/numpy.DataSource.html?highlight=datasources) to download the dataset. DataSources can be local files or remote files/URLs. The files may also be compressed or uncompressed. DataSource hides some of the low-level details of downloading the file, allowing you to simply pass in a valid file path (or URL) and obtain a file object.
@@ -93,7 +93,7 @@ TOY_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/t
 # ```
 # in a cell above the cell below
 
-# %% {"id": "aPxBx-2-C1yP", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "aPxBx-2-C1yP", "slideshow": {"slide_type": ""}}
 ds = np.DataSource(destpath="/tmp/")
 f = ds.open(TOY_DATASET_URL, "rb")
 
@@ -103,10 +103,10 @@ trainval_labels = toy_dataset["train_labels"]
 test_images = toy_dataset["test_images"]
 test_labels = toy_dataset["test_labels"]
 
-# %% [markdown] {"id": "dRMdfPRKC1yR", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "dRMdfPRKC1yR", "slideshow": {"slide_type": ""}}
 # ### A bit of data exploration
 
-# %% [markdown] {"id": "KLD83Y7vC1yR", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "KLD83Y7vC1yR", "slideshow": {"slide_type": ""}}
 # **Q1. Labels counting**
 #
 # a. What is the dataset size ?
@@ -117,17 +117,17 @@ test_labels = toy_dataset["test_labels"]
 #
 # d. What are the dimensions (height and width) of the images ? What are the number of channels ?
 
-# %% [markdown] {"id": "5xkrtVx-C1yS", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "5xkrtVx-C1yS", "slideshow": {"slide_type": ""}}
 # **Q2. Can you plot at least 8 examples of each label ? In a 4x4 grid ?**
 
-# %% [markdown] {"id": "n_fynC7iC1yT", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "n_fynC7iC1yT", "slideshow": {"slide_type": ""}}
 # Here are some examples that help you answer this question. Try them and make your own. A well-understandood dataset is the key to an efficient model.
 
-# %% {"id": "7XcQrRWKC1yT", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "7XcQrRWKC1yT", "slideshow": {"slide_type": ""}}
 import cv2
 import matplotlib.pyplot as plt
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "l7wcKYZBC1yU", "outputId": "4068a524-b60a-48ec-f40d-9538e2ea425f", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "l7wcKYZBC1yU", "outputId": "4068a524-b60a-48ec-f40d-9538e2ea425f", "slideshow": {"slide_type": ""}}
 LABEL_NAMES = ["Not an aircraft", "Aircraft"]
 
 print("Labels counts :")
@@ -139,7 +139,7 @@ for l, label in enumerate(LABEL_NAMES):
         f"Examples shape for label {l} : {trainval_images[trainval_labels == l, ::].shape}"
     )
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "ArvB0PsXC1yW", "outputId": "84db6bb2-22b4-4384-d197-2ddcac18d9fd", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "ArvB0PsXC1yW", "outputId": "84db6bb2-22b4-4384-d197-2ddcac18d9fd", "slideshow": {"slide_type": ""}}
 LABEL_NAMES = ["Not an aircraft", "Aircraft"]
 
 print("Labels counts :")
@@ -149,7 +149,7 @@ for l, c, label in zip(*np.unique(test_labels, return_counts=True), LABEL_NAMES)
 for l, label in enumerate(LABEL_NAMES):
     print(f"Examples shape for label {l} : {test_images[test_labels == l, ::].shape}")
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 594}, "id": "ol6QpoP6C1yX", "outputId": "5d445c41-2ed8-4f75-ed45-5ba1e25a2c8f", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 594}, "editable": true, "id": "ol6QpoP6C1yX", "outputId": "5d445c41-2ed8-4f75-ed45-5ba1e25a2c8f", "slideshow": {"slide_type": ""}}
 grid_size = 4
 grid = np.zeros((grid_size * 64, grid_size * 64, 3)).astype(np.uint8)
 for i in range(grid_size):
@@ -165,7 +165,7 @@ ax = fig.add_subplot(1, 1, 1)
 ax.imshow(grid)
 plt.show()
 
-# %% [markdown] {"id": "gFtNYE6EC1yY", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "gFtNYE6EC1yY", "slideshow": {"slide_type": ""}}
 # ### A bit about train-test
 #
 # You just downloaded a training and a test set.
@@ -188,7 +188,7 @@ plt.show()
 #
 # We will do a 80/20 sampling
 
-# %% {"id": "gHmjoZhLC1yZ", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "gHmjoZhLC1yZ", "slideshow": {"slide_type": ""}}
 idxs = np.random.permutation(np.arange(trainval_images.shape[0]))
 
 train_idxs, val_idxs = idxs[: int(0.8 * len(idxs))], idxs[int(0.8 * len(idxs)) :]
@@ -198,7 +198,7 @@ train_labels = trainval_labels[train_idxs]
 val_images = trainval_images[val_idxs]
 val_labels = trainval_labels[val_idxs]
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "7cfe6Yu6C1yZ", "outputId": "9d35706f-c6b9-4d44-fde4-e7509580b865", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "7cfe6Yu6C1yZ", "outputId": "9d35706f-c6b9-4d44-fde4-e7509580b865", "slideshow": {"slide_type": ""}}
 train_images.shape
 
 # %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
@@ -213,7 +213,7 @@ std = np.std(train_images, axis=(0, 1, 2)) / 255.0
 
 mean, std
 
-# %% [markdown] {"id": "SZ6VBCvQC1ya", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "SZ6VBCvQC1ya", "slideshow": {"slide_type": ""}}
 # ## Preparing our training
 #
 # Remember that training a deep learning model requires:
@@ -230,7 +230,7 @@ mean, std
 # ![](https://pbs.twimg.com/media/E_1d06XVcA8Dhzs?format=jpg)
 #
 
-# %% {"id": "10ow7xWIC1ya", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "10ow7xWIC1ya", "slideshow": {"slide_type": ""}}
 from typing import Callable
 
 import torch
@@ -240,7 +240,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
 
-# %% [markdown] {"id": "AKqUcnCcC1yb", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "AKqUcnCcC1yb", "slideshow": {"slide_type": ""}}
 # ### Defining Dataset & Transforms
 #
 # First, we need to tell pytorch how to load our data.
@@ -249,7 +249,7 @@ from torchvision import datasets, transforms
 #
 # We write our own `torch.data.Dataset` class
 
-# %% {"id": "uvFjmzHoC1yb", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "uvFjmzHoC1yb", "slideshow": {"slide_type": ""}}
 class NpArrayDataset(Dataset):
     def __init__(
         self,
@@ -283,10 +283,10 @@ class NpArrayDataset(Dataset):
         return x, y
 
 
-# %% [markdown] {"id": "0Z4N5o8AC1yb", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "0Z4N5o8AC1yb", "slideshow": {"slide_type": ""}}
 # Then we need to process our data (images) into "tensors" that torch can process, we define "transforms"
 
-# %% {"id": "PahdjhR5C1yc", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "PahdjhR5C1yc", "slideshow": {"slide_type": ""}}
 # transform to convert np array in range [0,255] to torch.Tensor [0.,1.]
 # then normalize by doing x = (x - mean) / std
 image_transforms = transforms.Compose(
@@ -299,10 +299,10 @@ image_transforms = transforms.Compose(
 # here we don't have anything to do
 target_transforms = None
 
-# %% [markdown] {"id": "p9QH51F-C1yc", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "p9QH51F-C1yc", "slideshow": {"slide_type": ""}}
 # Now we put everything together into something to load our data
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "CR14oNXyC1yd", "outputId": "55d52439-7ffc-46a6-d7fb-13c0b173e761", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "CR14oNXyC1yd", "outputId": "55d52439-7ffc-46a6-d7fb-13c0b173e761", "slideshow": {"slide_type": ""}}
 # load the training data
 train_set = NpArrayDataset(
     images=train_images,
@@ -327,7 +327,7 @@ print(len(validation_set))
 
 val_loader = DataLoader(validation_set, batch_size=64, shuffle=True)
 
-# %% [markdown] {"id": "0yxUYemIC1yd", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "0yxUYemIC1yd", "slideshow": {"slide_type": ""}}
 # ### Check that your dataset outputs correct data
 #
 # Always to this as a sanity check to catch bugs in your data processing pipeline
@@ -336,7 +336,7 @@ val_loader = DataLoader(validation_set, batch_size=64, shuffle=True)
 #
 # ![andrej](https://storage.googleapis.com/fchouteau-isae-deep-learning/static/andrej_tweet_1.png)
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 116}, "id": "Ic2sE836C1ye", "outputId": "db784726-e3e0-40c3-d9ff-9e0ec597d28e", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 116}, "editable": true, "id": "Ic2sE836C1ye", "outputId": "db784726-e3e0-40c3-d9ff-9e0ec597d28e", "slideshow": {"slide_type": ""}}
 k = np.random.randint(len(train_set))
 x, y = train_set[k]
 
@@ -356,7 +356,7 @@ plt.show()
 plt.imshow(train_set.images[k])
 plt.show()
 
-# %% [markdown] {"id": "4np1A43JC1yf", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "4np1A43JC1yf", "slideshow": {"slide_type": ""}}
 # ## Model
 
 # %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
@@ -364,7 +364,7 @@ plt.show()
 #
 # We will check if we have a GPU and set the "device" of pytorch on it so that it trains on GPU 
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "BmV9carLC1yf", "outputId": "dba28689-a129-4ae1-facc-41f9d3e55f8e", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "BmV9carLC1yf", "outputId": "dba28689-a129-4ae1-facc-41f9d3e55f8e", "slideshow": {"slide_type": ""}}
 # Apple Silicon Support
 if torch.backends.mps.is_available() and torch.backends.mps.is_built():
     DEVICE = torch.device("mps")
@@ -377,7 +377,7 @@ else:
 
 print(DEVICE)
 
-# %% [markdown] {"id": "AJ3oVqOHC1yg", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "AJ3oVqOHC1yg", "slideshow": {"slide_type": ""}}
 # ### Defining a model and computing the parameters
 #
 # Now we have to define a CNN to train. It's usually called a "network", and we define its "architecture".
@@ -446,7 +446,7 @@ print(DEVICE)
 #
 # Do you understand why ? 
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "hd06b1EnC1yh", "outputId": "039eb3c0-b120-4288-e404-f1e70bb76a48", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "hd06b1EnC1yh", "outputId": "039eb3c0-b120-4288-e404-f1e70bb76a48", "slideshow": {"slide_type": ""}}
 # Let's test this !
 
 some_model = nn.Sequential(
@@ -504,14 +504,14 @@ print(
 # let's delete the model now, we won't need it
 del some_model
 
-# %% [markdown] {"id": "YPpPpXwZC1yh", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "YPpPpXwZC1yh", "slideshow": {"slide_type": ""}}
 # **Let's do it yourself !**
 #
 # About weight init :
 # - https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
 # - https://www.pyimagesearch.com/2021/05/06/understanding-weight-initialization-for-neural-networks/
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 398}, "id": "d5nx-e0VC1yh", "outputId": "b4f8293d-996e-4e95-bcbc-0442c991ebbe", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 398}, "editable": true, "id": "d5nx-e0VC1yh", "outputId": "b4f8293d-996e-4e95-bcbc-0442c991ebbe", "slideshow": {"slide_type": ""}}
 # Let's define another model, except this time there are blanks ... it's up to you to fill them
 
 
@@ -581,7 +581,7 @@ print(
 
 # THIS CELL SHOULD NOT GIVE AN ERROR !
 
-# %% [markdown] {"id": "nxb-JeDnC1yk", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "nxb-JeDnC1yk", "slideshow": {"slide_type": ""}}
 # Hint: The answer (and there can only be one) is :
 #
 # <details>
@@ -702,92 +702,23 @@ print(
 #
 # You should be able to understand this
 
-# %% {"tags": ["solution"], "id": "9gpZy_3cC1yk", "editable": true, "slideshow": {"slide_type": ""}}
-def _init_weights(model):
-    # about weight initialization
-    # https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
-    # https://www.pyimagesearch.com/2021/05/06/understanding-weight-initialization-for-neural-networks/
-    for m in model.modules():
-        # Initialize all convs
-        if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-        if isinstance(m, nn.Linear):
-            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
-
-
-def model_fn():
-    model = nn.Sequential(
-        # A first convolution block
-        nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3),
-        nn.ReLU(),
-        nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3),
-        nn.ReLU(),
-        nn.MaxPool2d(2),
-        # Another stack of these
-        nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3),
-        nn.ReLU(),
-        nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3),
-        nn.ReLU(),
-        nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3),
-        nn.ReLU(),
-        nn.MaxPool2d(2),
-        # A final classifier
-        nn.Flatten(),
-        nn.Linear(in_features=12 * 12 * 32, out_features=64),
-        nn.ReLU(),
-        nn.Dropout(p=0.1),
-        nn.Linear(in_features=64, out_features=1),
-        nn.Sigmoid(),
-    )
-
-    _init_weights(model)
-
-    return model
-
-
-model = model_fn()
-
-print(model)
-
-x = torch.rand(
-    (16, 3, 64, 64)
-)  # We define an input of dimensions batch_size, channels, height, width
-
-print(x.shape)
-
-y = model(x)
-
-print(y.shape)
-
-print(
-    torchinfo.summary(
-        model,
-        input_data=x,
-        col_names=[
-            "input_size",
-            "output_size",
-            "num_params",
-        ],
-    )
-)
-
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "DAv9FrjAC1yl", "outputId": "6b42440f-8806-41e3-dc97-ecb499de36bd", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "DAv9FrjAC1yl", "outputId": "6b42440f-8806-41e3-dc97-ecb499de36bd", "slideshow": {"slide_type": ""}}
 # moving model to gpu if available
 model = model.to(DEVICE)
 
-# %% [markdown] {"id": "LhpN-UNfC1yl", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "LhpN-UNfC1yl", "slideshow": {"slide_type": ""}}
 # ### Defining our loss and optimizer
 #
 # Check the definition of the binary cross entropy:
 #
 # https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html#torch.nn.BCELoss
 
-# %% {"id": "6w1BHLnoC1ym", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "6w1BHLnoC1ym", "slideshow": {"slide_type": ""}}
 criterion = nn.BCELoss(reduction="mean")
 optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
 
 
-# %% [markdown] {"id": "8d1qaMZ8C1ym", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "8d1qaMZ8C1ym", "slideshow": {"slide_type": ""}}
 # ## Training with pytorch
 #
 # We will actually train the model, and plot training & validation metrics during training
@@ -799,7 +730,7 @@ optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
 # %% [markdown]
 # ### Defining the Training loop
 
-# %% {"id": "xfP8tBSMC1yn", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "xfP8tBSMC1yn", "slideshow": {"slide_type": ""}}
 def train_one_epoch(model, train_loader, criterion, optimizer):
     epoch_loss = []
 
@@ -918,7 +849,7 @@ def setup_training():
 # %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
 # Let's go !
 
-# %% {"colab": {"base_uri": "https://localhost:8080/"}, "id": "6fwFxOOFGQkZ", "outputId": "a6da7c86-8233-4257-cf0f-86d6ff13ea88", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/"}, "editable": true, "id": "6fwFxOOFGQkZ", "outputId": "a6da7c86-8233-4257-cf0f-86d6ff13ea88", "slideshow": {"slide_type": ""}}
 # Init the training
 model, criterion, optimizer = setup_training()
 
@@ -940,7 +871,7 @@ for epoch in range(EPOCHS):
     train_losses.append(train_epoch_loss)
     valid_losses.append(valid_epoch_loss)
 
-# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 279}, "id": "sFTlE66MC1yo", "outputId": "3f24cd80-7722-4228-e74e-7b4e2759fcb1", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"colab": {"base_uri": "https://localhost:8080/", "height": 279}, "editable": true, "id": "sFTlE66MC1yo", "outputId": "3f24cd80-7722-4228-e74e-7b4e2759fcb1", "slideshow": {"slide_type": ""}}
 # Plot training / validation loss
 plt.plot(train_losses, label="Training Loss")
 plt.plot(valid_losses, label="Validation Loss")
@@ -1043,25 +974,25 @@ scripted_model = torch.jit.load("scripted_model.pt", map_location=DEVICE)
 
 # files.download('scripted_model.pt')
 
-# %% [markdown] {"id": "VqMkcDroC1yp", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "VqMkcDroC1yp", "slideshow": {"slide_type": ""}}
 # We have finished what we need to do with the model, let's delete it !
 
-# %% {"id": "btrb85LmC1yp", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "btrb85LmC1yp", "slideshow": {"slide_type": ""}}
 del model
 
-# %% [markdown] {"id": "QW5XvyyZC1yq", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "QW5XvyyZC1yq", "slideshow": {"slide_type": ""}}
 # ## Testing our models and computing metrics
 #
 # Now that we have a trained network, it is important to measure how well it performs. We do not do that during training because theoretically we try to test on a context closer to how the final model will be used, meaning this can be another pipeline and is usually outside the training engine.
 #
 # You can refer to your ML course or on resources on the web to see how we can measure it.
 
-# %% [markdown] {"id": "g0TldNDQC1yq", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "g0TldNDQC1yq", "slideshow": {"slide_type": ""}}
 # ### Loading saved model
 #
 # State dict method
 
-# %% {"id": "Q-kCmgWEC1yr", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "Q-kCmgWEC1yr", "slideshow": {"slide_type": ""}}
 # Instantiate a new empty model
 model = model_fn()
 
@@ -1073,12 +1004,12 @@ model.load_state_dict(torch.load(checkpoint_path))
 
 print("Model Loaded")
 
-# %% [markdown] {"id": "a-rbNh7qC1yr", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "a-rbNh7qC1yr", "slideshow": {"slide_type": ""}}
 # ### Inferencing on the test dataset
 #
 # Now we will run predictions on the test dataset using the newly loaded model
 
-# %% {"id": "LjlrKEEOC1yr", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "LjlrKEEOC1yr", "slideshow": {"slide_type": ""}}
 test_ds = NpArrayDataset(
     images=test_images,
     labels=test_labels,
@@ -1086,10 +1017,10 @@ test_ds = NpArrayDataset(
     label_transforms=target_transforms,
 )
 
-# %% {"id": "Jf3oIRA4C1yr", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "Jf3oIRA4C1yr", "slideshow": {"slide_type": ""}}
 import tqdm
 
-# %% {"id": "VWM757ggC1ys", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "VWM757ggC1ys", "slideshow": {"slide_type": ""}}
 y_true = []
 y_pred = []
 
@@ -1114,19 +1045,19 @@ with torch.no_grad():
 y_pred = np.concatenate(y_pred, axis=0)
 y_true = np.asarray(y_true)
 
-# %% {"id": "awHUQ2KxC1ys", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "awHUQ2KxC1ys", "slideshow": {"slide_type": ""}}
 print(y_pred.shape)
 
 print(y_pred[4])
 
-# %% {"id": "aGqeE1UJC1ys", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "aGqeE1UJC1ys", "slideshow": {"slide_type": ""}}
 y_pred_classes = y_pred[:, 0] > 0.5
 
-# %% [markdown] {"id": "wMuCtss8C1ys", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "wMuCtss8C1ys", "slideshow": {"slide_type": ""}}
 # ### Confusion matrix
 # Here, we are first computing the [confusion matrix]():
 
-# %% {"id": "QSq5-t7dC1yt", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "QSq5-t7dC1yt", "slideshow": {"slide_type": ""}}
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 print("Confusion matrix")
@@ -1139,7 +1070,7 @@ disp = ConfusionMatrixDisplay(
 disp.plot()
 plt.show()
 
-# %% [markdown] {"id": "Ao41bfOuC1yt", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "Ao41bfOuC1yt", "slideshow": {"slide_type": ""}}
 # ### ROC curve
 #
 # The next metric we are computing is the [Receiver Operating Characteristic](https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html). A receiver operating characteristic curve, or ROC curve, is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. The method was originally developed for operators of military radar receivers starting in 1941, which led to its name. 
@@ -1150,7 +1081,7 @@ plt.show()
 #
 # It is used to choose a threshold on the output probability in case you are interesting in controling the false positive rate.
 
-# %% {"id": "sEj4ZBgTC1yt", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "sEj4ZBgTC1yt", "slideshow": {"slide_type": ""}}
 # Compute ROC curve and Area Under Curver
 
 from sklearn.metrics import auc, roc_curve
@@ -1161,7 +1092,7 @@ y_pred_probas = np.round(y_pred[:, 0], 2)
 fpr, tpr, thresholds = roc_curve(y_true, y_pred_probas)
 roc_auc = auc(fpr, tpr)
 
-# %% {"id": "KGD6ukiMC1yu", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "KGD6ukiMC1yu", "slideshow": {"slide_type": ""}}
 plt.figure()
 lw = 2
 plt.plot(
@@ -1233,14 +1164,19 @@ plt.show()
 
 # How did the confusion matrix evolve ? Does it match your intuition ?
 
-# %% [markdown] {"id": "ql5f8eLHC1yu", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "ql5f8eLHC1yu", "slideshow": {"slide_type": ""}}
 # ### Misclassified examples
 #
 # It is always interesting to check mis classified examples.
 #
 # It usually provides tips on how to improve your model.
+#
+# - Plot some of the missclassified examples that have true label = 0: Those are false positives
+# - Plot some of the missclassified examples that have true label = 1: those are false negatives (misses)
+#
+# Can you interpret the false positives ?
 
-# %% {"id": "Z0wvNDzmC1yv", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "Z0wvNDzmC1yv", "slideshow": {"slide_type": ""}}
 misclassified_idxs = np.where(y_pred_classes != y_true)[0]
 
 print(len(misclassified_idxs))
@@ -1266,7 +1202,7 @@ ax = fig.add_subplot(1, 1, 1)
 ax.imshow(grid)
 plt.show()
 
-# %% [markdown] {"id": "-DDeFy4cC1yv", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "-DDeFy4cC1yv", "slideshow": {"slide_type": ""}}
 # ## Improving our training / validation loop
 #
 # We will add more advanced features to our training loop for better models
@@ -1302,16 +1238,16 @@ plt.show()
 #
 # ```                                             
 
-# %% [markdown] {"id": "84qzXDMGC1yw", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "84qzXDMGC1yw", "slideshow": {"slide_type": ""}}
 # ### Early stopping
 #
 # You've seen that it is possible to overfit it you're not careful,
 #
 # **Go back to your previous class and adapt the training loop to add early stopping**
 
-# %% {"id": "NW7rLbdGC1yx", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "NW7rLbdGC1yx", "slideshow": {"slide_type": ""}}
 
-# %% [markdown] {"id": "4XRzekUGC1yy", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "4XRzekUGC1yy", "slideshow": {"slide_type": ""}}
 # ### Data Augmentation
 #
 #
@@ -1334,12 +1270,12 @@ plt.show()
 # **Remember : We apply data augmentation only during training**
 #
 
-# %% {"id": "ua4UQAZWC1yy", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "ua4UQAZWC1yy", "slideshow": {"slide_type": ""}}
 import torch.functional as F
 import torch.utils
 import torchvision.transforms
 
-# %% {"id": "em78uFlnC1yy", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "em78uFlnC1yy", "slideshow": {"slide_type": ""}}
 # Example (very simple) data augmentation to get your started, you can add more transforms to this list
 
 train_transform = torchvision.transforms.Compose(
@@ -1352,7 +1288,7 @@ train_transform = torchvision.transforms.Compose(
     ]
 )
 
-# %% {"id": "5yPlhQbzC1yy", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "5yPlhQbzC1yy", "slideshow": {"slide_type": ""}}
 # Example
 trainset_augmented = NpArrayDataset(
     images=train_images,
@@ -1361,7 +1297,7 @@ trainset_augmented = NpArrayDataset(
     label_transforms=None,
 )
 
-# %% {"id": "MeKVDcHrC1yz", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "MeKVDcHrC1yz", "slideshow": {"slide_type": ""}}
 # Get image from dataset. Note: it has been converted as a torch tensor in CHW format in float32 normalized !
 img, label = trainset_augmented[0]
 img = img.numpy().transpose((1, 2, 0)) * std + mean
@@ -1375,7 +1311,7 @@ img_orig = trainset_augmented.images[0]
 plt.imshow(img_orig)
 plt.show()
 
-# %% {"id": "ej7Jb0SNC1yz", "editable": true, "slideshow": {"slide_type": ""}}
+# %% {"editable": true, "id": "ej7Jb0SNC1yz", "slideshow": {"slide_type": ""}}
 # do another training and plot our metrics again. Did we change something ?
 
 # %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
@@ -1392,42 +1328,105 @@ plt.show()
 
 # %% {"editable": true, "slideshow": {"slide_type": ""}}
 
-# %% [markdown] {"toc-hr-collapsed": true, "editable": true, "slideshow": {"slide_type": ""}}
-# ## Food for thoughts: Tooling
+# %% [markdown]
+# ## Transfer learning and Model architecture modification
 #
-# To conclude this notebook, reflect on the following,
+# There are no absolute law concerning the structure of your deep Learning model. During the [Deep Learning class](https://github.com/SupaeroDataScience/deep-learning/blob/main/deep/Deep%20Learning.ipynb) you had an overview of existing models
 #
-# You have launched different experiences and obtained different results,
+# You can operate a modification on your structure and observe the effect on final metrics. Of course, remain consistent with credible models, cf Layer Patterns chapter on this "must view" course : http://cs231n.github.io/convolutional-networks/
 #
-# Did you feel the notebook you used was sufficient ? Which tools would you like to have in order to properly run your experiments ? (Quick google search or ask someone) Do they already exist ?
+# See here for an introduction to complex CNNs:
+# http://cs231n.stanford.edu/slides/2023/lecture_6.pdf
 #
-# ### **Presentation : High level frameworks**
+# <img src="https://fchouteau.github.io/isae-practical-deep-learning/static/img/comparison_architectures.png" alt="pokemon" style="width: 400px;"/>
 #
-# <img src="https://raw.githubusercontent.com/pytorch/ignite/master/assets/logo/ignite_logo_mixed.svg" alt="ignite" style="width: 400px;"/>
+# For usual tasks such as classification or detection, we use "transfer learning":
 #
-# Pytorch ignite is what we call a "high-level library" over pytorch, its objectives is to abstract away most of the boilerplate code for training deep neural network.
+#     In practice, very few people train an entire Convolutional Network from scratch (with random initialization), because it is relatively rare to have a dataset of sufficient size. Instead, it is common to pretrain a ConvNet on a very large dataset (e.g. ImageNet, which contains 1.2 million images with 1000 categories), and then use the ConvNet either as an initialization or a fixed feature extractor for the task of interest.
+#     
+# Adapt this tutorial to do transfer learning from a network available in torchvision to our use case
 #
-# Usually, they make the development process easier by enabling you to focus on what's important instead of writing distributed and optimized training loops and plugging metrics / callbacks. Because we all forgot to call `.backward()` or `.zero_grad()` at least once.
+# https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 #
-# Here an overview of the high-level libraries available for pytorch,
+# I advise you to select resnet18
 #
-# https://neptune.ai/blog/model-training-libraries-pytorch-ecosystem?utm_source=twitter&utm_medium=tweet&utm_campaign=blog-model-training-libraries-pytorch-ecosystem
+# The biggest library of pretrained models is available here :
 #
-# Of these, we would like to highlight three of them:
+# https://github.com/rwightman/pytorch-image-models
 #
-# - pytorch-ignite, officially sanctioned by the pytorch team (its repo lives at https://pytorch.org/ignite/), which is developped by [someone from Toulouse](https://twitter.com/vfdev_5) - yes there is a member of the pytorch team living in Toulouse, we are not THAT behind in ML/DL :wishful-thinking:
+# You can also use off the shelf architecture provided by torchvision, for example:
 #
-# - pytorch-lightning (https://www.pytorchlightning.ai/) which has recently seen its 1.0 milestone and has been developped to a company. It is more "research oriented" that pytorch-ignite, and with a lower abstraction level, but seems to enable more use case.
+# ```python
+# import torchvision.models
 #
-# - catalyst (https://github.com/catalyst-team/catalyst) 
+# resnet18 = torchvision.models.resnet18(num_classes=2)
+# ```
 #
-# - skorch (https://github.com/skorch-dev/skorch). This class was previously written in skorch. Skorch mimics the scikit-learn API and allows bridging the two libraries together. It's a bit less powerful but you write much less code than the two libraries above, and if you are very familiar with scikit-learn, it could be very useful for fast prototyping
+# You can also use [transfer learning](https://machinelearningmastery.com/transfer-learning-for-deep-learning/) to "finetune" already trained features on your dataset
 #
+# You can adapt one of those two tutorials that use either torchvision or timm to take an existing pre-trained CNN and "finetune int" for your data, while training only a few parameters
 #
-# **Take a look at the [previous class](https://nbviewer.jupyter.org/github/SupaeroDataScience/deep-learning/blob/main/deep/PyTorch%20Ignite.ipynb), the [official examples](https://nbviewer.jupyter.org/github/pytorch/ignite/tree/master/examples/notebooks/) or the [documentation](https://pytorch.org/ignite/) if want to learn about Ignite**
+# A simple option : [torchvision tutorial](https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html#finetuning-the-convnet)
+#
+# A more advanced library : [timm tutorial](https://rumn.medium.com/part-1-ultimate-guide-to-fine-tuning-in-pytorch-pre-trained-model-and-its-configuration-8990194b71e) 
+#
+# Note that `timm` is a very famous library that stores all the state of the art CNN and Vision Transformer models for your needs
+#
+# **Exercise*** Change your model function for a transfer learning one. Does it improve your performance ?
+
+# %% [markdown]
+# ## Switching to a more complex use case
+#
+# If you want you can try a more complex use case
+#
+# You will get the following:
+#
+# - 50k images in training which you should use as training & validation
+# - 5k images in test, which you should only use to compute your final metrics on. **Don't ever use this dataset for early stopping / intermediary metrics**
+#
+# <img src="https://i.stack.imgur.com/pXAfX.png" alt="pokemon" style="width: 400px;"/>
+#
+# Here we will split the trainval_dataset to obtain a training and a validation dataset.
+#
+# For example, try to use 20% of the images as validation
+#
+# You must have seen that the dataset was really unbalanced, so a random sampling will not work...
+#
+# Use stratified sampling to keep the label distribution between training and validation
+#
+# ```python
+# background_indexes = np.where(trainval_labels == 0)[0]
+# foreground_indexes = np.where(trainval_labels == 1)[0]
+#
+# train_bg_indexes = background_indexes[: int(0.8 * len(background_indexes))]
+# valid_bg_indexes = background_indexes[int(0.8 * len(background_indexes)) :]
+#
+# train_fg_indexes = foreground_indexes[: int(0.8 * len(foreground_indexes))]
+# valid_fg_indexes = foreground_indexes[int(0.8 * len(foreground_indexes)) :]
+#
+# train_indexes = list(train_bg_indexes) + list(train_fg_indexes)
+# valid_indexes = list(valid_bg_indexes) + list(valid_fg_indexes)
+#
+# train_images = trainval_images[train_indexes, :, :, :]
+# train_labels = trainval_labels[train_indexes]
+#
+# valid_images = trainval_images[valid_indexes, :, :, :]
+# valid_labels = trainval_labels[valid_indexes]
+#
+# print(np.unique(train_labels, return_counts=True))
+#
+# print(np.unique(valid_labels, return_counts=True))
+# ```
+#
+# **Update the notebook with the following dataset url and relaunch your training and evaluations**
+#
+# You can update the trainval split to stratify it
+
+# %%
+TRAINVAL_DATASET_URL = "https://storage.googleapis.com/fchouteau-isae-deep-learning/large_aircraft_dataset_2023.npz"
 
 # %% [markdown] {"editable": true, "slideshow": {"slide_type": ""}}
-# ## **Optional** exercises to run at home
+# ## **Optional** exercises (to run at home)
 #
 # If you're done with this, you can explore a little bit more : Now that we have a nice training loop we can do hyperparameter tuning !
 #
@@ -1506,7 +1505,7 @@ plt.show()
 #     
 # </details>
 
-# %% [markdown] {"id": "xUlVYFuPC1yz", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "xUlVYFuPC1yz", "slideshow": {"slide_type": ""}}
 # ### Trying other models
 #
 # You have seen a class on different model structure,
@@ -1519,7 +1518,7 @@ plt.show()
 # You can also use models from [torchvision](https://pytorch.org/docs/stable/torchvision/models.html#classification) in your loop, or as inspiration
 #
 
-# %% [markdown] {"id": "L5vTgr9OC1yz", "editable": true, "slideshow": {"slide_type": ""}}
+# %% [markdown] {"editable": true, "id": "L5vTgr9OC1yz", "slideshow": {"slide_type": ""}}
 # **Modify the model structure and launch another training... Is it better ?**
 
 # %% {"editable": true, "slideshow": {"slide_type": ""}}
@@ -1547,5 +1546,39 @@ plt.show()
 # http://cs231n.stanford.edu/slides/2023/lecture_7.pdf
 #
 # https://karpathy.github.io/2019/04/25/recipe/
+
+# %% [markdown]
+# ### Food for thoughts: Tooling
+#
+# To conclude this notebook, reflect on the following,
+#
+# You have launched different experiences and obtained different results,
+#
+# Did you feel the notebook you used was sufficient ? Which tools would you like to have in order to properly run your experiments ? (Quick google search or ask someone) Do they already exist ?
+#
+# ### **Presentation : High level frameworks**
+#
+# <img src="https://raw.githubusercontent.com/pytorch/ignite/master/assets/logo/ignite_logo_mixed.svg" alt="ignite" style="width: 400px;"/>
+#
+# Pytorch ignite is what we call a "high-level library" over pytorch, its objectives is to abstract away most of the boilerplate code for training deep neural network.
+#
+# Usually, they make the development process easier by enabling you to focus on what's important instead of writing distributed and optimized training loops and plugging metrics / callbacks. Because we all forgot to call `.backward()` or `.zero_grad()` at least once.
+#
+# Here an overview of the high-level libraries available for pytorch,
+#
+# https://neptune.ai/blog/model-training-libraries-pytorch-ecosystem?utm_source=twitter&utm_medium=tweet&utm_campaign=blog-model-training-libraries-pytorch-ecosystem
+#
+# Of these, we would like to highlight three of them:
+#
+# - pytorch-ignite, officially sanctioned by the pytorch team (its repo lives at https://pytorch.org/ignite/), which is developped by [someone from Toulouse](https://twitter.com/vfdev_5) - yes there is a member of the pytorch team living in Toulouse, we are not THAT behind in ML/DL :wishful-thinking:
+#
+# - pytorch-lightning (https://www.pytorchlightning.ai/) which has recently seen its 1.0 milestone and has been developped to a company. It is more "research oriented" that pytorch-ignite, and with a lower abstraction level, but seems to enable more use case.
+#
+# - catalyst (https://github.com/catalyst-team/catalyst) 
+#
+# - skorch (https://github.com/skorch-dev/skorch). This class was previously written in skorch. Skorch mimics the scikit-learn API and allows bridging the two libraries together. It's a bit less powerful but you write much less code than the two libraries above, and if you are very familiar with scikit-learn, it could be very useful for fast prototyping
+#
+#
+# **Take a look at the [previous class](https://nbviewer.jupyter.org/github/SupaeroDataScience/deep-learning/blob/main/deep/PyTorch%20Ignite.ipynb), the [official examples](https://nbviewer.jupyter.org/github/pytorch/ignite/tree/master/examples/notebooks/) or the [documentation](https://pytorch.org/ignite/) if want to learn about Ignite**
 
 # %%
